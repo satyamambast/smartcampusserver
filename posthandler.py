@@ -3,7 +3,7 @@ import logging
 import mysql.connector
 class DB:
     def __init__(self):
-        self.mydb = mysql.connector.connect(host="localhost",user="root",passwd="root", database="smartdustbin")
+        self.mydb = mysql.connector.connect(host="localhost",user="root",passwd="root", database="smartdustbin",port=8886)
         self.mycursor = self.mydb.cursor()
     def inserttodustbin(self,id,perc):
         update_query="""UPDATE data SET per==%s where id='%s'"""
