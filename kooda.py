@@ -84,7 +84,7 @@ def code():
                 time.sleep(1)
                 continue
             garbage = classific.identify(0)
-            if garbage == "paper":
+            if garbage == "Paper":
                 for i in range(13,3,-1):
                     pwm1.ChangeDutyCycle(i)
                     time.sleep(0.03)
@@ -94,7 +94,7 @@ def code():
                     pwm1.ChangeDutyCycle(i)
                     time.sleep(0.03)
                     print("down")
-            if garbage == "plastic":
+            if garbage == "Plastic":
                 for i in range(13,3,-1):
                     pwm2.ChangeDutyCycle(i)
                     time.sleep(0.03)
@@ -105,7 +105,7 @@ def code():
                     time.sleep(0.03)
                     print("down")
             url = 'http://192.168.43.86:8090/'
-            myobj = {'type':'nfc','ID':tag}
+            myobj = {'type':'nfc','tag':tag,'ID':'001'}
             x = requests.post(url, data = myobj)
 
             time.sleep(1)
@@ -117,7 +117,7 @@ def update():
     d1 = distance1()
     d2 = distance2()
     url = 'http://192.168.43.86:8090/'
-    myobj = {'type':'update','time':time.time(),'plastic':d2,'paper':d1}
+    myobj = {'type':'update','time':time.time(),'plastic':d2,'paper':d1,'ID':'001'}
     x = requests.post(url, data = myobj)
 
 
