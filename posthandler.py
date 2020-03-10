@@ -15,6 +15,9 @@ class S(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
+        self.mydb = mysql.connector.connect(host="localhost",user="root",passwd="root", database="campus"        )
+        self.mycursor = self.mydb.cursor()
+        #self.mycursor.execute("SHOW DATABASE
         # self.DaBa=DB()
     def do_GET(self):
         logging.info("GET request,\nPath: %s\nHeaders:\n%s\n", str(self.path), str(self.headers))
@@ -28,8 +31,22 @@ class S(BaseHTTPRequestHandler):
         self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
         post_data=post_data.decode('utf-8')
         d = dict(x.split("=") for x in post_data.split("&"))
-        for key in d:
-            print(key,d[key])
+        if d["type"]=="nfc":
+            select_query="""select credit from users where ID=%s"""
+            self.mycursor.execute(select_query,d["ID"])
+            deets=self.mycursor.fetchall()
+            if len(deets)==0:
+                insert_query = """INSERT INTO users
+                                VALUES (%s, %s) """
+                insert_tuple=(d[ID],1)
+                self.mycursor.execute(insert_query,insert_tuple)
+            else:
+                cr=int(d[0][0])+1
+                update_query="""UPDATE users SET credit=%s where ID=%s"""
+            
+        else:
+            
+
 
 
 
