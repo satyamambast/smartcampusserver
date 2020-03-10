@@ -4,6 +4,7 @@ import RPi.GPIO as GPIO
 import time
 import cv2
 import threading
+import classific
 GPIO.setmode(GPIO.BCM)
 
 trig_1 = 18
@@ -69,12 +70,12 @@ def distance2():
 def code():
     try:
         while True:
-            d1 = distance1()
-            d2 = distance2()
-            if(d1<40):
-                print
-            print("Distance left in Plastic Dustbin is->",d1)
-            print("Distance left in Paper Dustbin is ->",d2)
+            # d1 = distance1()
+            # d2 = distance2()
+            # if(d1<40):
+            #     print
+            # print("Distance left in Plastic Dustbin is->",d1)
+            # print("Distance left in Paper Dustbin is ->",d2)
             clf=nfc.ContactlessFrontend()
             assert clf.open('ttyS0') is True
             tag = clf.connect(rdwr={'on-connect': lambda tag: False})
@@ -82,7 +83,7 @@ def code():
             if tag == False:
                 time.sleep(1)
                 continue
-            garbage = input('give input->')
+            garbage = classific.identify(0)
             if garbage == "paper":
                 for i in range(13,3,-1):
                     pwm1.ChangeDutyCycle(i)
@@ -104,7 +105,7 @@ def code():
                     time.sleep(0.03)
                     print("down")
             url = 'http://192.168.43.86:8090/'
-            myobj = {'type':'nfc','tag':tag,'distance':d,'time':'6766767'}
+            myobj = {'type':'nfc','ID':tag}
             x = requests.post(url, data = myobj)
 
             time.sleep(1)
@@ -112,16 +113,20 @@ def code():
         pwm.stop()
         GPIO.cleanup()
 
-def camera():
-    while True:
-        ret,frame = cam.read()
-        cv2.imshow('frame',frame)
+def update():
+    d1 = distance1()
+    d2 = distance2()
+    url = 'http://192.168.43.86:8090/'
+    myobj = {'type':'update','time':time.time(),'plastic':d2,'paper':d1}
+    x = requests.post(url, data = myobj)
 
-#cami = threading.Thread(target=camera)
+
+cami = threading.Thread(target=update)
 #full = threading.Thread(target=code)
-#cami.start()
+cami.start()
 #full.start()
 #cami.join()
 #full.join()
 code()
+cami.join()
 

@@ -43,8 +43,11 @@ class S(BaseHTTPRequestHandler):
             else:
                 cr=int(d[0][0])+1
                 update_query="""UPDATE users SET credit=%s where ID=%s"""
-            
-        else:
+            self.mydb.commit()
+        if d["type"]=="update":
+            for key in d:
+                print(key)
+
             
 
 
